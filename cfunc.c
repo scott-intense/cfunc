@@ -185,7 +185,7 @@ static void compileFun(struct MemoEntry *entry) {
   char *soPath;
   char *cmd;
 
-  asprintf(&soPath, "%s/lua.cfunc.%d.so", tmp, (int)getpid());
+  asprintf(&soPath, "%s/lua.cfunc.%p.%d.so", tmp, entry, (int)getpid());
   asprintf(&cmd, "%s -shared -undefined dynamic_lookup -x c %s - -o '%s'", cc, cflags, soPath);
 
   FILE *p = popen(cmd, "w");
