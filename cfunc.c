@@ -94,7 +94,7 @@ static struct MemoEntry *memoFind(lua_State *L, int idx, const char *chead, size
     if(n < nups)
       continue;
 
-    // check include string (if there is one)
+    // check include string
     if(memcmp(chead, cur->chead, cheadlen))
       continue;
     // finally, check implementation string
@@ -253,6 +253,8 @@ static int cfunc_cfunc (lua_State *L) {
     compileFun(entry);
   }
 
+  if(!entry->fun)
+    return 0; // bail if no function
   if(entry->nups) {
     lua_pushvalue(L, 1);
     lua_pushcclosure(L, entry->fun, 1);
