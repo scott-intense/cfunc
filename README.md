@@ -27,3 +27,7 @@ end)
 fun('argument x', 'argument y')
 print(myUpvalue)
 ~~~~
+~~~~
+an upvalue! argument x argument y
+another upvalue
+~~~~
