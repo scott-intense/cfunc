@@ -85,7 +85,10 @@ static struct MemoEntry *memoFind(lua_State *L, int idx, const char *chead, size
 
     // check upvalues are same name, same order
     for(n = 0; n < nups; n++) {
-      if(strcmp(lua_getupvalue(L, -1, n+1), ups[n]))
+      const char *upvalue = lua_getupvalue(L, -1, n+1);
+
+      lua_pop(L, 1);
+      if(strcmp(upvalue, ups[n]))
         break;
     }
     if(n < nups)
@@ -147,8 +150,10 @@ static struct MemoEntry *memoAdd(lua_State *L, int idx, const char *chead, size_
 
   char **ups = malloc(sizeof(char *) * ar.nups);
 
-  for(n = 0; n < ar.nups; n++)
+  for(n = 0; n < ar.nups; n++) {
     ups[n] = strdup(lua_getupvalue(L, idx, n+1));
+    lua_pop(L, 1);
+  }
 
   newEntry->nups = ar.nups;
   newEntry->ups = ups;
