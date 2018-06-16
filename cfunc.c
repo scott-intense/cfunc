@@ -24,15 +24,18 @@ SOFTWARE.
 
 // write c in your lua source
 
-#define LUA_LIB
-#include "lua.h"
-#include "lauxlib.h"
+#define _GNU_SOURCE
+#include <stdio.h>
+#undef _GNU_SOURCE
 
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <unistd.h>
 #include <dlfcn.h>
+
+#define LUA_LIB
+#include "lua.h"
+#include "lauxlib.h"
 
 static struct MemoEntry {
   char *chead;
@@ -186,7 +189,12 @@ static void compileFun(struct MemoEntry *entry) {
   char *cmd;
 
   asprintf(&soPath, "%s/lua.cfunc.%p.%d.so", tmp, entry, (int)getpid());
-  asprintf(&cmd, "%s -shared -undefined dynamic_lookup -x c %s - -o '%s'", cc, cflags, soPath);
+#if __APPLE__
+#define UNDEF_DYNAMIC "-undefined dynamic_lookup" 
+#else
+#define UNDEF_DYNAMIC /**/
+#endif
+  asprintf(&cmd, "%s -shared -fPIC " UNDEF_DYNAMIC " -x c %s - -o '%s'", cc, cflags, soPath);
 
   FILE *p = popen(cmd, "w");
 
@@ -220,7 +228,7 @@ static void compileFun(struct MemoEntry *entry) {
     fputs("}", p);
     pclose(p);
 
-    void *dl = dlopen(soPath, RTLD_LOCAL);
+    void *dl = dlopen(soPath, RTLD_LAZY|RTLD_LOCAL);
 
     unlink(soPath);
     free(soPath);
