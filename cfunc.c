@@ -166,16 +166,22 @@ static struct MemoEntry *memoAdd(lua_State *L, int idx, const char *chead, size_
 // TODO lots of error checking
 // compile the function, load it
 static void compileFun(struct MemoEntry *entry) {
-  char const *tmp = getenv("TMPDIR");
+  const char *tmp = getenv("TMPDIR");
+  const char *cc = getenv("CC");
+  const char *cflags = getenv("CFLAGS");
 
   if(!tmp)
     tmp = "/tmp";
+  if(!cc)
+    cc = "clang";
+  if(!cflags)
+    cflags = "";
 
   char *soPath;
   char *cmd;
 
   asprintf(&soPath, "%s/lua.cfunc.%d.so", tmp, (int)getpid());
-  asprintf(&cmd, "clang -shared -undefined dynamic_lookup -x c -O2 - -o '%s'", soPath);
+  asprintf(&cmd, "%s -shared -undefined dynamic_lookup -x c %s - -o '%s'", cc, cflags, soPath);
 
   FILE *p = popen(cmd, "w");
 
