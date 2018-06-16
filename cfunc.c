@@ -204,7 +204,7 @@ static void compileFun(struct MemoEntry *entry) {
       fprintf(p, "#define set_%s do { lua_setupvalue(L, lua_upvalueindex(1), %d); } while(0)\n", ups[n], n+1);
     }
     // "line" 1+ represents implementation
-    fputs("int cfunc(lua_State *L) {\n#line 1\n", p);
+    fputs("LUALIB_API int cfunc(lua_State *L) {\n#line 1\n", p);
     fwrite(entry->cimpl, entry->cimpllen, 1, p);
     fputs("}", p);
     pclose(p);
