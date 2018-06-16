@@ -2,7 +2,7 @@
 
 # build
 
-clang cfunc.c -shared -fPIC -o cfunc.so
+clang cfunc.c -shared -fPIC -undefined dynamic_lookup -o cfunc.so
 
 # use
 
