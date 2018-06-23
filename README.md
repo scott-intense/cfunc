@@ -1,3 +1,7 @@
+# DEPRECATED
+
+try [cola](https://github.com/scott-intense/lua-cola)
+
 # cfunc
 
 # build
